@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <getopt.h>
 #include <unistd.h>
 
 #include "tmux.h"
@@ -54,7 +55,7 @@ usage(void)
 {
 	fprintf(stderr,
 	    "usage: %s [-2CDlNuVv] [-c shell-command] [-f file] [-L socket-name]\n"
-	    "            [-S socket-path] [-T features] [command [flags]]\n",
+	    "            [-S socket-path] [-T features] [command [flags]] [--version]\n",
 	    getprogname());
 	exit(1);
 }
@@ -361,8 +362,27 @@ main(int argc, char **argv)
 		environ_set(global_environ, "PWD", 0, "%s", cwd);
 	expand_paths(TMUX_CONF, &cfg_files, &cfg_nfiles, 1);
 
-	while ((opt = getopt(argc, argv, "2c:CDdf:lL:NqS:T:uUvV")) != -1) {
+	static int version_flag = 0;
+	static int help_flag  = 0;
+	static struct option long_options[2] =
+        {
+          {"version", 0, &version_flag, 1},
+          {"help", 0, &help_flag, 1},
+          {NULL, 0, NULL, 0}
+        };
+  	  int option_index = 0;
+	while ((opt = getopt_long(argc, argv, "2c:CDdf:lL:NqS:T:uUvV", long_options, &option_index)) != -1) {
 		switch (opt) {
+		case 0:
+			if (long_options[0].flag != 0) {
+				printf("tmux %s\n", getversion());
+ 				exit(0);
+			}
+			if (long_options[1].flag != 0) {
+				usage();
+ 				exit(0);
+			}
+			break;
 		case '2':
 			tty_add_features(&feat, "256", ":,");
 			break;
