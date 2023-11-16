@@ -182,8 +182,7 @@ cmd_new_session_exec(struct cmd *self, struct cmdq_item *item)
 	    c->fd != -1 &&
 	    (~c->flags & CLIENT_CONTROL)) {
 		if (server_client_check_nested(cmdq_get_client(item))) {
-			cmdq_error(item, "sessions should be nested with care, "
-			    "unset $TMUX to force");
+			cmdq_error(item, "Don't nest sessions! Use `$ tnew  SESSION_NAME` instead");
 			goto fail;
 		}
 		if (tcgetattr(c->fd, &tio) != 0)

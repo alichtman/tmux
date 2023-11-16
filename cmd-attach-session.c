@@ -71,8 +71,7 @@ cmd_attach_session(struct cmdq_item *item, const char *tflag, int dflag,
 		return (CMD_RETURN_NORMAL);
 
 	if (server_client_check_nested(c)) {
-		cmdq_error(item, "sessions should be nested with care, "
-		    "unset $TMUX to force");
+		cmdq_error(item, "Don't nest sessions! Use `$ tnew SESSION_NAME` instead");
 		return (CMD_RETURN_ERROR);
 	}
 
